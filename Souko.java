@@ -1,7 +1,7 @@
 class Souko {
 
-    private final int height = 20;
-    private final int width = 30;
+    private final int height = 23;
+    private final int width = 26;
     private final int numberOfLocations = 3;
     private final int numberOfLuggages = 3;
     private Worker worker = new Worker();
@@ -10,22 +10,31 @@ class Souko {
     private SoukoState[][] soukoStates = new SoukoState[height][width];
 
     Souko() {
-	for (int i = 0; i < this.soukoStates.length; i++) {
-	    for (int j = 0; j < this.soukoStates[i].length; j++) {
-		if (i == 0 || i == this.soukoStates.length-1
-		    || j == 0 || j == this.soukoStates[i].length-1) {
+	for (int i = 0; i < soukoStates.length; i++) {
+	    for (int j = 0; j < soukoStates[i].length; j++) {
+		if (i == 0 || i == soukoStates.length-1
+		    || j == 0 || j == soukoStates[i].length-1) {
 		    setState(i, j, SoukoState.WALL);
 		} else {
 		    setState(i, j, SoukoState.SPACE);
 		}
 	    }
 	}
-	locations[0] = new Location(new Place(7, 15));
-	locations[1] = new Location(new Place(15, 9));
-	locations[2] = new Location(new Place(15, 21));
-	luggages[0] = new Luggage(new Place(2, 5));
-	luggages[1] = new Luggage(new Place(2, 7));
-	luggages[2] = new Luggage(new Place(2, 9));
+	for (int j = 5; j < soukoStates[11].length-5; j++) {
+	    setState(11, j, SoukoState.WALL);
+	}
+	for (int i = 0; i < soukoStates.length; i++) {
+	    if (i==5 || i==6 || i == 16 || i == 17) continue;
+	    for (int j = 5; j < soukoStates[i].length; j += 5) {
+		setState(i, j, SoukoState.WALL);
+	    }
+	}
+	locations[0] = new Location(new Place(1, 11));
+	locations[1] = new Location(new Place(1, 16));
+	locations[2] = new Location(new Place(21, 19));
+	luggages[0] = new Luggage(new Place(2, 7));
+	luggages[1] = new Luggage(new Place(8, 7));
+	luggages[2] = new Luggage(new Place(6, 3));
     }
 
     private SoukoState getState(int x, int y) {
