@@ -40,28 +40,34 @@ class Souko {
 
     private boolean movable(Place fromPlace, Direction direction) {
 	Place toPlace = new Place(fromPlace.getX(), fromPlace.getY());
+	Place beyondToPlace = new Place(fromPlace.getX(), fromPlace.getY());
 	if (direction == Direction.UP) {
 	    toPlace.setX(fromPlace.getX()-1);
+	    beyondToPlace.setX(toPlace.getX()-1);
 	} else if (direction == Direction.DOWN) {
 	    toPlace.setX(fromPlace.getX()+1);
+	    beyondToPlace.setX(toPlace.getX()+1);
 	} else if (direction == Direction.LEFT) {
 	    toPlace.setY(fromPlace.getY()-1);
+	    beyondToPlace.setY(toPlace.getY()-1);
 	} else if (direction == Direction.RIGHT) {
 	    toPlace.setY(fromPlace.getY()+1);
+	    beyondToPlace.setY(toPlace.getY()+1);
 	}
 
 	switch (this.getState(toPlace.getX(), toPlace.getY())) {
 	case SPACE:
-	    for (Luggage luggage: luggages) {
-		if (!toPlace.equals(luggage.getPlace())) {
-		    return true;
-		} else {
-		    if(movable(toPlace, direction)) {
-			return true;
-		    }
+	    if (toPlace.isLuggage(luggages)) {
+		if (beyondToPlace.isLuggage(luggages)) {
 		    return false;
 		}
+		switch (this.getState(beyondToPlace.getX(), beyondToPlace.getY())) {
+		case SPACE: return true;
+		case WALL: return false;
+		default: return false;
+		}
 	    }
+	    return true;
 	case WALL: return false;
 	default: return false;
 	}
@@ -93,10 +99,8 @@ class Souko {
     public boolean isComplete() {
 	double countLuggageOnLocation = 0;
 	for (Luggage luggage: luggages) {
-	    for (Location location: locations) {
-		if (location.getPlace().equals(luggage.getPlace())) {
-		    countLuggageOnLocation++;
-		}
+	    if (luggage.getPlace().isLocation(locations)) {
+		countLuggageOnLocation++;
 	    }
 	}
 	if (countLuggageOnLocation == locations.length) {
@@ -120,17 +124,13 @@ class Souko {
 			System.out.print("i");
 			continue yLoop;
 		    }
-		    for (Luggage luggage: luggages) {
-			if (here.equals(luggage.getPlace())) {
-			    System.out.print("o");
-			    continue yLoop;
-			}
+		    if (here.isLuggage(luggages)) {
+			System.out.print("o");
+			continue yLoop;
 		    }
-		    for (Location location: locations) {
-			if (here.equals(location.getPlace())) {
-			    System.out.print("_");
-			    continue yLoop;
-			}
+		    if (here.isLocation(locations)) {
+			System.out.print("_");
+			continue yLoop;
 		    }
 		    System.out.print(" ");
 		}

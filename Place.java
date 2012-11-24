@@ -34,4 +34,22 @@ class Place {
 	}
 	return false;
     }
+
+    public boolean isLuggage(Luggage[] luggages) {
+	for (Luggage luggage: luggages) {
+	    if (luggage.getPlace().equals(this)) {
+		return true;
+	    }
+	}
+	return false;
+    }
+
+    public boolean isLocation(Location[] locations) {
+	for (Location location: locations) {
+	    if (location.getPlace().equals(this)) {
+		return true;
+	    }
+	}
+	return false;
+    }
 }
