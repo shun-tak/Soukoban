@@ -8,11 +8,23 @@ public class Soukoban {
 	Souko souko = new Souko();
 	Scanner scan = new Scanner(System.in);
 	String input = "";
-	while (!souko.isGameCleared()) {
+	while (!souko.isComplete()) {
 	    souko.view();
 	    System.out.println("進行方向を入力してください． (w: up, s: down, a: left, d: right)");
 	    input = scan.next();
-	    System.out.println(input);
+	    if (input.equals("w")) {
+		souko.moveWorker(Direction.UP);
+	    } else if (input.equals("s")) {
+		souko.moveWorker(Direction.DOWN);
+	    } else if (input.equals("a")) {
+		souko.moveWorker(Direction.LEFT);
+	    } else if (input.equals("d")) {
+		souko.moveWorker(Direction.RIGHT);
+	    } else {
+		System.out.println(input);
+	    }
 	}
+	souko.view();
+	System.out.println("Complete!");
     }
 }
