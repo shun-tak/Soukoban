@@ -1,0 +1,70 @@
+System components
+- Souko (a warehouse)
+- A worker who carries luggages
+- Luggages
+- Locations to put Luggages on
+
+System actions
+- check whether the game is complete
+  (when all luggages are placed on each locations)
+- display Souko state on the console
+- move a worker
+- carry a luggage
+- check whether a worker can move
+
+
+public enum Direction {
+  UP,
+  DOWN,
+  LEFT,
+  RIGHT,
+}
+
+public enum State {
+  WALL,
+  LOCATION,
+  SPACE,
+}
+
+public class Place {
+  private int x;
+  private int y;
+
+  Place(int x, int y) {
+    this.x = x;
+    this.y = y;
+  }
+
+  public int getX() { return this.x; }
+  public int getY() { return this.y; }
+}
+
+public class Worker {
+  private Place place;
+
+  Worker() { this.place = new Place(2, 2); }
+
+  private boolean movable(Direction d) { ... }
+  public boolean move(Direction d) { ... }
+}
+
+public class Luggage {
+  private Place place;
+
+  Luggage(Place place) { this.place = place; }
+
+  private boolean movable(Direction d) { ... }
+  public boolean move(Direction d) { ... }
+}
+
+public class Souko {
+  private final int ROWS = 12;
+  private final int COLUMN = 21;
+  private State[][] states;
+
+  Souko() { ... }
+
+  public boolean moveWorker(Direction d) { ... }
+  public boolean isComplete() { ... }
+  public void display() { ... }
+}
