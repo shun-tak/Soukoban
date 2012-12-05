@@ -4,13 +4,13 @@ public class Soukoban {
 
     public static void main(String[] args) {
 
-	System.out.println("Soukoban start!");
+	System.out.println("Start the Soukoban game!");
 	Souko souko = new Souko();
 	Scanner scan = new Scanner(System.in);
 	String input = "";
 	while (!souko.isComplete()) {
 	    souko.view();
-	    System.out.println("進行方向を入力してください． (w: up, s: down, a: left, d: right)");
+	    System.out.println("Input direction: w=>up, s=>down, a=>left, d=>right");
 	    input = scan.next();
 	    if (input.equals("w")) {
 		souko.moveWorker(Direction.UP);
