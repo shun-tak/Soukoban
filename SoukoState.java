@@ -1,4 +1,0 @@
-enum SoukoState {
-    WALL,
-    SPACE,
-}

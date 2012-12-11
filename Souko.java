@@ -3,45 +3,34 @@ class Souko {
     private final int height = 12;
     private final int width = 21;
     private final int numberOfLocations = 3;
-    private final int numberOfLuggages = 3;
+    private final int numberOfLuggages = numberOfLocations;
     private Worker worker = new Worker();
-    private Location[] locations = new Location[numberOfLocations];
-    private Luggage[] luggages = new Luggage[numberOfLuggages];
-    private SoukoState[][] soukoStates = new SoukoState[height][width];
+    private Luggages<Luggage> luggages = new Luggages<Luggage>();
+    private States states = new States(height, width);
 
     Souko() {
-	for (int i = 0; i < soukoStates.length; i++) {
-	    for (int j = 0; j < soukoStates[i].length; j++) {
-		if (i == 0 || i == soukoStates.length-1
-		    || j == 0 || j == soukoStates[i].length-1) {
-		    setState(i, j, SoukoState.WALL);
+	for (int i = 0; i < height; i++) {
+	    for (int j = 0; j < width; j++) {
+		if (i == 0 || i == height-1
+		    || j == 0 || j == width-1) {
+		    states.set(i, j, State.WALL);
 		} else {
-		    setState(i, j, SoukoState.SPACE);
+		    states.set(i, j, State.SPACE);
 		}
 	    }
 	}
-	for (int i = 0; i < soukoStates.length; i++) {
+	for (int i = 0; i < height; i++) {
 	    if (i==5 || i==6) continue;
-	    for (int j = 5; j < soukoStates[i].length; j += 5) {
-		setState(i, j, SoukoState.WALL);
+	    for (int j = 5; j < width; j += 5) {
+		states.set(i, j, State.WALL);
 	    }
 	}
-	locations[0] = new Location(new Place(1, 11));
-	locations[1] = new Location(new Place(1, 16));
-	locations[2] = new Location(new Place(10, 14));
-	luggages[0] = new Luggage(new Place(2, 7));
-	luggages[1] = new Luggage(new Place(8, 7));
-	luggages[2] = new Luggage(new Place(6, 3));
-    }
-
-    private SoukoState getState(int x, int y) {
-	return this.soukoStates[x][y];
-    }
-
-    private void setState(int x, int y, SoukoState state) {
-	if (this.getState(x, y) != SoukoState.WALL) {
-	    this.soukoStates[x][y] = state;
-	}
+	states.set(1, 11, State.LOCATION);
+	states.set(1, 16, State.LOCATION);
+	states.set(10, 14, State.LOCATION);
+	luggages.add(new Luggage(new Place(2, 7)));
+	luggages.add(new Luggage(new Place(8, 7)));
+	luggages.add(new Luggage(new Place(6, 3)));
     }
 
     private boolean movable(Place fromPlace, Direction direction) {
@@ -61,14 +50,16 @@ class Souko {
 	    beyondToPlace.setY(toPlace.getY()+1);
 	}
 
-	switch (this.getState(toPlace.getX(), toPlace.getY())) {
+	switch (states.get(toPlace)) {
 	case SPACE:
-	    if (toPlace.isLuggage(luggages)) {
-		if (beyondToPlace.isLuggage(luggages)) {
+	case LOCATION:
+	    if (luggages.isOn(toPlace)) {
+		if (luggages.isOn(beyondToPlace)) {
 		    return false;
 		}
-		switch (this.getState(beyondToPlace.getX(), beyondToPlace.getY())) {
+		switch (states.get(beyondToPlace)) {
 		case SPACE: return true;
+		case LOCATION: return true;
 		case WALL: return false;
 		default: return false;
 		}
@@ -105,11 +96,11 @@ class Souko {
     public boolean isComplete() {
 	double countLuggageOnLocation = 0;
 	for (Luggage luggage: luggages) {
-	    if (luggage.getPlace().isLocation(locations)) {
+	    if (states.get(luggage.getPlace()) == State.LOCATION) {
 		countLuggageOnLocation++;
 	    }
 	}
-	if (countLuggageOnLocation == locations.length) {
+	if (countLuggageOnLocation == numberOfLocations) {
 	    return true;
 	} else {
 	    return false;
@@ -118,10 +109,10 @@ class Souko {
 
     public void view() {
 	Place here = new Place();
-	for (int i = 0; i < this.soukoStates.length; i++) {
+	for (int i = 0; i < height; i++) {
 	    yLoop:
-	    for (int j = 0; j < this.soukoStates[i].length; j++) {
-		if (this.getState(i, j) == SoukoState.WALL) {
+	    for (int j = 0; j < width; j++) {
+		if (states.get(i, j) == State.WALL) {
 		    System.out.print("W");
 		} else {
 		    here.setX(i);
@@ -130,11 +121,11 @@ class Souko {
 			System.out.print("i");
 			continue yLoop;
 		    }
-		    if (here.isLuggage(luggages)) {
+		    if (luggages.isOn(here)) {
 			System.out.print("o");
 			continue yLoop;
 		    }
-		    if (here.isLocation(locations)) {
+		    if (states.get(here) == State.LOCATION) {
 			System.out.print("_");
 			continue yLoop;
 		    }
